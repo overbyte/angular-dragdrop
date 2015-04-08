@@ -275,11 +275,12 @@ var jqyoui = angular.module('ngDragDrop', []).service('ngDragDropService', ['$ti
       require: '?jqyouiDroppable',
       restrict: 'A',
       link: function(scope, element, attrs) {
-        var dragSettings, jqyouiOptions, zIndex, killWatcher;
+        var dragSettings, jqyouiOptions, zIndex, killWatcher, targetZ;
         var updateDraggable = function(newValue, oldValue) {
           if (newValue) {
             dragSettings = scope.$eval(element.attr('jqyoui-draggable') || element.attr('data-jqyoui-draggable')) || {};
             jqyouiOptions = scope.$eval(attrs.jqyouiOptions) || {};
+            targetZ = (jqyouiOptions.dragZIndex) ? jqyouiOptions.dragZIndex : 9999;
             element
               .draggable({disabled: false})
               .draggable(jqyouiOptions)
@@ -287,7 +288,7 @@ var jqyoui = angular.module('ngDragDrop', []).service('ngDragDropService', ['$ti
                 start: function(event, ui) {
                   ngDragDropService.draggableScope = scope;
                   zIndex = angular.element(jqyouiOptions.helper ? ui.helper : this).css('z-index');
-                  angular.element(jqyouiOptions.helper ? ui.helper : this).css('z-index', 9999);
+                  angular.element(jqyouiOptions.helper ? ui.helper : this).css('z-index', targetZ);
                   jqyoui.startXY = angular.element(this)[dragSettings.containment || 'offset']();
                   ngDragDropService.callEventCallback(scope, dragSettings.onStart, event, ui);
                 },
